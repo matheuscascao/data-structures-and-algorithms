@@ -42,12 +42,7 @@ export default class DoublyLinkedList<T> {
         }
         this.length++;
         
-        let curr = this.head;
-        for (let i = 0; curr && i < idx; i++) {
-            curr = curr.next;
-        }
-        curr = curr as Node<T>;
-
+        const curr = this.getAt(idx) as Node<T>;
         const node = { value: item } as Node<T>;
     
         node.next = curr;
@@ -81,6 +76,75 @@ export default class DoublyLinkedList<T> {
         node.prev = this.tail;
         this.tail.next = node;
         this.tail = node;
+    }
+
+    removeNode(item: T): T | undefined {
+        let curr = this.head;
+        for(let i = 0; curr && i < this.length; i++) {
+            if(curr.value == item) {
+                break;
+            }
+            curr = curr.next;
+        }
+        if (!curr) {
+            return undefined;
+        }
+        this.length--;
+
+        if (this.length === 0) {
+            const out = this.head?.value;
+            this.head = this.tail = undefined;
+            return out;
+        }
+
+        // if (curr.prev) {
+        //     curr.prev.next = curr.next;
+        // }
+        // if (curr.next) {
+        //     curr.next.prev = curr.prev;
+        // }
+
+        if (curr.prev) {
+            curr.prev.next = curr.next;
+        }
+
+        if (curr.next) {
+            curr.next.prev = curr.prev;
+        }
+
+        if (curr === this.head) {
+            this.head = curr.next;
+        }
+
+        if (curr === this.tail) {
+            this.tail = curr.prev;
+        }
+
+        curr.prev = curr.next = undefined;
+        
+        return curr.value;
+    }
+
+    get(idx: number): T | undefined {
+        const node = this.getAt(idx);
+        return node?.value;
+    }
+
+    removeAt(idx: number): T | undefined {
+        const node = this.getAt(idx);
+
+        if (!node) {
+            return undefined;
+        }
+
+    }
+
+    private getAt(idx: number): Node<T> | undefined {
+        let curr = this.head;
+        for (let i = 0; curr && i < idx; i++) {
+            curr = curr.next;
+        }
+        return curr;
     }
 }
 
